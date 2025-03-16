@@ -1,0 +1,10 @@
+<suite name="Automation Suite" >
+    <test name="Login Tests">
+        <listeners>
+            <listener class-name="com.portfolio.automation.utils.ReportManager"/>
+        </listeners>
+        <classes>
+            <class name="com.portfolio.automation.tests.UI.CheckTest"/>
+        </classes>
+    </test>
+</suite>

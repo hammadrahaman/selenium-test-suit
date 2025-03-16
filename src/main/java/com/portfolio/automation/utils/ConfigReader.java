@@ -1,4 +1,4 @@
-package com.portfolio.Automation.utils;
+package com.portfolio.automation.utils;
 
 
 import java.io.FileInputStream;
@@ -10,7 +10,7 @@ public class ConfigReader {
 
     static {
         try {
-            FileInputStream file = new FileInputStream("src/testdata/config.properties");
+            FileInputStream file = new FileInputStream("src/test/java/resource/config.properties");
             properties = new Properties();
             properties.load(file);
         } catch (IOException e) {

@@ -1,6 +1,6 @@
-package com.portfolio.Automation.factory;
+package com.portfolio.automation.factory;
 
-import com.portfolio.Automation.utils.ConfigReader;
+import com.portfolio.automation.utils.ConfigReader;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,14 +18,14 @@ public class DriverFactory {
     public static WebDriver getDriver() {
         if (driver == null) {
             String browser = ConfigReader.getProperty("browser");
-
+            boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless"));
             switch (browser.toLowerCase()) {
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
                     chromeOptions.addArguments("--start-maximized"); // Start maximized
                     chromeOptions.addArguments("--disable-popup-blocking"); // Disable popups
-                    chromeOptions.addArguments("--headless"); // Run in headless mode (optional)
+                  if(headless) {chromeOptions.addArguments("--headless");} // Run in headless mode (optional)
                     driver = new ChromeDriver(chromeOptions);
                     break;
 
@@ -33,14 +33,14 @@ public class DriverFactory {
                     WebDriverManager.firefoxdriver().setup();
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
                     firefoxOptions.addArguments("--private"); // Open in private mode
-                    firefoxOptions.addArguments("--headless"); // Run headless mode
+                    if(headless) { firefoxOptions.addArguments("--headless");} // Run headless mode
                     driver = new FirefoxDriver(firefoxOptions);
                     break;
 
                 case "edge":
                     WebDriverManager.edgedriver().setup();
                     EdgeOptions edgeOptions = new EdgeOptions();
-                    edgeOptions.addArguments("--headless");
+                    if(headless) { edgeOptions.addArguments("--headless");}
                     edgeOptions.addArguments("--inprivate"); // Open in InPrivate mode
                     edgeOptions.addArguments("--start-maximized");
                     driver = new EdgeDriver(edgeOptions);
@@ -57,6 +57,16 @@ public class DriverFactory {
         }
         return driver;
     }
+
+
+    public static void resetDriver() {
+        if (driver != null) {
+            driver.quit();
+            driver = null; // Reset driver so it gets recreated in getDriver()
+        }
+    }
+
+
 
     public static void closeDriver() {
         if (driver != null) {
