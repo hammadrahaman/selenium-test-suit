@@ -94,5 +94,10 @@ public class LoginPage {
     }
 
 
+    public void visitWebPage(){
+        driver.navigate().to(ConfigReader.getProperty("webpage"));
+    }
+
+
 
 }
