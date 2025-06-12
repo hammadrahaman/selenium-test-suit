@@ -1,5 +1,6 @@
 package com.portfolio.automation.factory;
 
+import com.epam.healenium.SelfHealingDriver;
 import com.portfolio.automation.utils.ConfigReader;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
@@ -13,60 +14,63 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import java.time.Duration;
 
 public class DriverFactory {
-    private static WebDriver driver;
+    private static SelfHealingDriver driver;  // Wrapped driver
 
-    public static WebDriver getDriver() {
+    public static SelfHealingDriver getDriver() {
         if (driver == null) {
             String browser = ConfigReader.getProperty("browser");
             boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless"));
+            WebDriver baseDriver;
+
             switch (browser.toLowerCase()) {
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
-                    chromeOptions.addArguments("--start-maximized"); // Start maximized
-                    chromeOptions.addArguments("--disable-popup-blocking"); // Disable popups
-                  if(headless) {chromeOptions.addArguments("--headless");} // Run in headless mode (optional)
-                    driver = new ChromeDriver(chromeOptions);
+                    chromeOptions.addArguments("--start-maximized");
+                    chromeOptions.addArguments("--disable-popup-blocking");
+                    if (headless) chromeOptions.addArguments("--headless");
+                    baseDriver = new ChromeDriver(chromeOptions);
                     break;
 
                 case "firefox":
                     WebDriverManager.firefoxdriver().setup();
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    firefoxOptions.addArguments("--private"); // Open in private mode
-                    if(headless) { firefoxOptions.addArguments("--headless");} // Run headless mode
-                    driver = new FirefoxDriver(firefoxOptions);
+                    firefoxOptions.addArguments("--private");
+                    if (headless) firefoxOptions.addArguments("--headless");
+                    baseDriver = new FirefoxDriver(firefoxOptions);
                     break;
 
                 case "edge":
                     WebDriverManager.edgedriver().setup();
                     EdgeOptions edgeOptions = new EdgeOptions();
-                    if(headless) { edgeOptions.addArguments("--headless");}
-                    edgeOptions.addArguments("--inprivate"); // Open in InPrivate mode
+                    edgeOptions.addArguments("--inprivate");
                     edgeOptions.addArguments("--start-maximized");
-                    driver = new EdgeDriver(edgeOptions);
+                    if (headless) edgeOptions.addArguments("--headless");
+                    baseDriver = new EdgeDriver(edgeOptions);
                     break;
 
                 default:
                     throw new RuntimeException("Unsupported browser: " + browser);
             }
 
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(
+            baseDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(
                     Integer.parseInt(ConfigReader.getProperty("implicitWait"))
             ));
-            driver.manage().window().maximize();
+
+            baseDriver.manage().window().maximize();
+
+            // Wrap the base driver with SelfHealingDriver
+            driver = SelfHealingDriver.create(baseDriver);
         }
         return driver;
     }
 
-
     public static void resetDriver() {
         if (driver != null) {
             driver.quit();
-            driver = null; // Reset driver so it gets recreated in getDriver()
+            driver = null;
         }
     }
-
-
 
     public static void closeDriver() {
         if (driver != null) {

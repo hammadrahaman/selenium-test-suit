@@ -33,7 +33,7 @@ public class LoginPage {
 
     private By optymTeamLogin = By.xpath("//*[text()='Optym Team Login']");
     private By emailField = By.xpath("//*[@placeholder='Email, phone, or Skype']");
-    private By passwordField = By.xpath("//*[@type='password']");
+    private By passwordField = By.xpath("//*[@type='pas']");
     private By submitSignIn = By.xpath("//*[@type='submit']");
 
     private By contactSupport = By.xpath("//*[@id='kc-text']");
@@ -78,7 +78,7 @@ public class LoginPage {
 
 
     public void login(String env){
-        driver.navigate().to(ConfigReader.getProperty(env));
+      //  driver.navigate().to(ConfigReader.getProperty(env));
         System.out.println("------------------");
         waitMethod(optymTeamLogin);
         click(optymTeamLogin);

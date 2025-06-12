@@ -1,0 +1,16 @@
+services:
+  mongo:
+    image: mongo:4.4.6
+    container_name: healenium-mongo
+    ports:
+      - "27017:27017"
+
+  healenium:
+    image: healenium/hlm-backend:3.4.8
+    container_name: healenium-backend
+    ports:
+      - "7878:7878"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mongo

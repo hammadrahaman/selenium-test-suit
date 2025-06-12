@@ -5,10 +5,10 @@ import com.portfolio.automation.base.LoginPage;
 import org.testng.annotations.Test;
 
 public class CheckTest extends BaseTest {
-
     @Test
    public void visitPage(){
         LoginPage log = new LoginPage(driver);
         log.visitWebPage();
+        log.login("qa");
     }
 }
